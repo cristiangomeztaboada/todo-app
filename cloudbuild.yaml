@@ -22,7 +22,7 @@ steps:
     - --platform
     - managed
     - --set-env-vars
-    - NEXT_PUBLIC_API_URL=$_NEXT_PUBLIC_API_URL
+    - NEXT_PUBLIC_API_URL=https://34.96.115.12.nip.io/api/todo
 
 # timeout para la construcción (20 minutos) - por defecto es 10 minutos
 timeout: '1200s'
@@ -30,7 +30,3 @@ timeout: '1200s'
 # Opciones para la compilación, incluyendo la solución para los logs
 options:
   default_logs_bucket_behavior: REGIONAL_USER_OWNED_BUCKET
-
-# Sustituciones para variables de entorno no sensibles
-substitutions:
-  _NEXT_PUBLIC_API_URL: 'https://34.96.115.12.nip.io/api/todo'
