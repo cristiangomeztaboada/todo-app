@@ -1,7 +1,11 @@
 steps:
-  # Paso 1: Construye la imagen de Docker para el frontend
+  # Paso 1: Construye la imagen de Docker para el frontend, pasando la variable de entorno
 - name: 'gcr.io/cloud-builders/docker'
-  args: ['build', '-t', 'gcr.io/$PROJECT_ID/todo-app', '.']
+  args: 
+    - build
+    - --tag=gcr.io/$PROJECT_ID/todo-app
+    - --build-arg=NEXT_PUBLIC_API_URL=$_NEXT_PUBLIC_API_URL
+    - .
 
   # Paso 2: Sube la imagen a Artifact Registry
 - name: 'gcr.io/cloud-builders/docker'
@@ -21,12 +25,14 @@ steps:
     - --allow-unauthenticated
     - --platform
     - managed
-    - --set-env-vars
-    - NEXT_PUBLIC_API_URL=https://34.96.115.12.nip.io/api/todo
 
-# timeout para la construcción (20 minutos) - por defecto es 10 minutos
+# Mueve el 'timeout' a este nivel, fuera de 'options'
 timeout: '1200s'
 
 # Opciones para la compilación, incluyendo la solución para los logs
 options:
   default_logs_bucket_behavior: REGIONAL_USER_OWNED_BUCKET
+
+# Sustituciones para variables de entorno no sensibles
+substitutions:
+  _NEXT_PUBLIC_API_URL: 'https://34.96.115.12.nip.io/api/todo'
