@@ -1,6 +1,6 @@
 // lib/api.ts
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://34.96.115.12.nip.io/api/todo';
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export type Task = {
   id: number;

@@ -1,24 +1,21 @@
-# Etapa 1: Instalar dependencias
-FROM node:18-alpine AS deps
-WORKDIR /app
-COPY package.json package-lock.json ./
-RUN npm install --frozen-lockfile
-
-# Etapa 2: Construir la aplicación
+# Etapa 1: Instala dependencias y construye la aplicación
 FROM node:18-alpine AS builder
 WORKDIR /app
-COPY --from=deps /app/node_modules ./node_modules
+COPY package.json package-lock.json ./
+RUN npm install
 COPY . .
 RUN npm run build
 
-# Etapa 3: Ejecutar la aplicación en producción
-FROM node:18-alpine AS runner
+# Etapa 2: Crea la imagen final de producción
+FROM node:18-alpine
 WORKDIR /app
-ENV NODE_ENV production
-# Copiar archivos de construcción
+COPY --from=builder /app/package.json ./
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/public ./public
-COPY --from=builder /app/.next/standalone ./
-COPY --from=builder /app/.next/static ./.next/static
-# Exponer el puerto
-EXPOSE 3001
-CMD ["node", "server.js"]
+# La API URL debe pasarse como una variable de entorno en el despliegue
+ENV NEXT_PUBLIC_API_URL=
+
+# Expone el puerto por defecto de Next.js
+EXPOSE 3000
+CMD ["npm", "start"]
